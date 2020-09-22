@@ -33,7 +33,7 @@
     @method updateList()
         Update the asset viewer, needed e.g. when new items were added.
 
-asset-viewer.flexfix(class="{opts.namespace} {opts.class}")
+old-asset-viewer.flexfix(class="{opts.namespace} {opts.class}")
     .flexfix-header
         .toright
             b {vocGlob.sort}

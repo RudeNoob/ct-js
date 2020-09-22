@@ -1,5 +1,5 @@
 root-tag
-    main-menu(if="{projectOpened}")
+    main-viewport(if="{projectOpened}")
     notepad-panel(if="{projectOpened}")
     dnd-processor(if="{projectOpened}")
     project-selector(if="{!projectOpened}")
