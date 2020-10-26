@@ -23,7 +23,8 @@
         name: string, // the displayed name.
         // Below 'h1', 'h2', 'h3', 'h4' are purely decorational, for grouping fields. Others denote the type of an input field.
         type: 'h1' | 'h2' | 'h3' | 'h4' | 'text' | 'textfield' | 'code' | 'number' |
-              'slider' | 'sliderAndNumber' | 'point2D' | 'checkbox' | 'radio' | 'texture' | 'type',
+              'slider' | 'sliderAndNumber' | 'point2D' | 'checkbox' | 'radio' | 'texture' | 'type' |
+              'color',
         key?: string, // the name of a JSON key to write into the `opts.entity`. Not needed for hN types, but required otherwise
                       // The key may have special suffixes that tell the exporter to unwrap foreign keys (resources' UIDs) into asset names.
                       // These are supposed to always be used with `'type'` and `'texture'` input types.
@@ -35,6 +36,7 @@
             name: string,
             help?: string
         }>,
+        array?: boolean, // Whether to display an editable list instead of just one field.
         collect?: boolean, // Whether to collect values and suggest them later as an auto-completion results. (Not yet implemented)
         collectScope?: string // The name of a category under which to store suggestions from `collect`.
     }
@@ -46,7 +48,7 @@ extensions-editor
         h3(if="{ext.type === 'h3'}") {ext.name}
         h4(if="{ext.type === 'h4'}") {ext.name}
         dl(class="{compact: compact}" if="{['h1', 'h2', 'h3', 'h4'].indexOf(ext.type) === -1}")
-            dt
+            dt(if="{!parent.opts.intable}")
                 label.block.checkbox(if="{ext.type === 'checkbox'}")
                     input.nogrow(
                         if="{ext.type === 'checkbox'}"
@@ -60,7 +62,34 @@ extensions-editor
                     b {ext.name}
                     b :
                     hover-hint(if="{ext.help && parent.opts.compact}" text="{ext.help}")
-            dd
+            dd(if="{ext.type === 'table'}")
+                table.nicetable
+                    tr
+                        th(if="{!parent.opts.compact}") №
+                        th(each="{field in ext.fields}") {field.name}
+                        th Actions
+                    tr(each="{entry, ind in parent.opts.entity[ext.key]}")
+                        td(if="{!parent.opts.compact}") {ind}
+                        td(each="{field in ext.fields}")
+                            extensions-editor(intable="true" compact="da" entity="{entry}" customextends="{[field]}")
+                        td
+                            // Use opacity to keep nice layout
+                            .inlineblock(onclick="{moveUp}" title="{voc.moveUp}" style="opacity: {ind === 0? 0 : 1};")
+                                svg.feather.dim
+                                    use(xlink:href="data/icons.svg#arrow-up")
+                            .inlineblock(onclick="{moveDown}"  style="opacity: {ind === parent.opts.entity[ext.key].length - 1? 0 : 1};" title="{voc.moveDown}")
+                                svg.feather.dim
+                                    use(xlink:href="data/icons.svg#arrow-down")
+                            .inlineblock.red(onclick="{deleteScript}" title="{voc.deleteScript}")
+                                svg.feather.dim
+                                    use(xlink:href="data/icons.svg#delete")
+                        tr(if="{!parent.opts.entity[ext.key] || !parent.opts.entity[ext.key].length}")
+                            td(colspan="{ext.fields.length + (parent.opts.compact ? 1 : 2)}") {parent.voc.noEntries}
+                button(onclick="{parent.addRow}")
+                    svg.feather
+                        use(xlink:href="data/icons.svg#plus")
+                    span {parent.voc.addRow}
+            dd(if="{ext.type !== 'table'}")
                 texture-input(
                     if="{ext.type === 'texture'}"
                     class="{compact: parent.opts.compact, wide: parent.opts.wide}"
@@ -92,6 +121,13 @@ extensions-editor
                     class="{compact: parent.opts.compact, wide: parent.opts.wide}"
                     val="{parent.opts.entity[ext.key] || ext.default}"
                     onselected="{writeUid(ext.key)}"
+                )
+                color-input(
+                    if="{ext.type === 'color'}"
+                    class="{compact: parent.opts.compact, wide: parent.opts.wide}"
+                    color="{parent.opts.entity[ext.key] || ext.default}"
+                    hidealpha="{ext.noalpha ? 'noalpha' : ''}"
+                    onapply="{wire('this.opts.entity.'+ ext.key)}"
                 )
                 input(
                     if="{ext.type === 'text'}"
@@ -179,6 +215,8 @@ extensions-editor
               path = require('path');
 
         this.mixin(window.riotWired);
+        this.namespace = 'extensionsEditor';
+        this.mixin(window.riotVoc);
 
         this.extensions = [];
         this.refreshExtends = () => {
@@ -220,6 +258,18 @@ extensions-editor
             }
             this.update();
         };
+
+        this.addRow = e => {
+            const {ext} = e.item;
+            if (!this.opts.entity[ext.key]) {
+                this.opts.entity[ext.key] = [];
+            }
+            const row = {};
+            for (const field of ext.fields) {
+                row[field.key]  = field.default;
+            }
+            this.opts.entity[ext.key].push(row);
+        }
 
         window.signals.on('modulesChanged', this.refreshExtends);
         this.on('unmount', () => {

@@ -1,0 +1,73 @@
+{
+    "main": {
+        "name": "Splash screen",
+        "tagline": "Create splash screens at project settings.",
+        "version": "0.0.0",
+        "authors": [{
+            "name": "Cosmo Myzrail Gorynych",
+            "mail": "admin@nersta.ru"
+        }],
+        "categories": [
+            "customization"
+        ]
+    },
+    "fields": [{
+        "name": "Common settings",
+        "type": "h2"
+    }, {
+        "name": "Slide duration, ms",
+        "key": "slideDuration",
+        "default": 3000,
+        "type": "number",
+        "min": 0
+    }, {
+        "name": "Transition duration, ms",
+        "key": "transitionDuration",
+        "default": 1000,
+        "type": "number",
+        "min": 0
+    }, {
+        "name": "Background color",
+        "key": "backgroundColor",
+        "default": "#000000",
+        "type": "color"
+    }, {
+        "name": "Transition color",
+        "key": "transitionColor",
+        "default": "#000000",
+        "type": "color"
+    }, {
+        "name": "Slides are skippable",
+        "key": "skippable",
+        "default": true,
+        "type": "checkbox"
+    }, {
+        "name": "Slides",
+        "type": "h2"
+    }, {
+        "name": "Slides",
+        "key": "slides",
+        "default": [],
+        "type": "table",
+        "fields": [{
+            "name": "Logo texture",
+            "key": "texture@@texture",
+            "default": -1,
+            "type": "texture"
+        }, {
+            "name": "Effect",
+            "type": "select",
+            "default": "none",
+            "options": [{
+                "value": "none",
+                "name": "None"
+            }, {
+                "value": "zoomIn",
+                "name": "Zoom in"
+            }, {
+                "value": "zoomOut",
+                "name": "Zoom out"
+            }]
+        }]
+    }]
+}
