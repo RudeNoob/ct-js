@@ -65,23 +65,24 @@ extensions-editor
             dd(if="{ext.type === 'table'}")
                 table.nicetable
                     tr
-                        th(if="{!parent.opts.compact}") №
+                        th.center(if="{!parent.opts.compact}") №
                         th(each="{field in ext.fields}") {field.name}
                         th Actions
-                    tr(each="{entry, ind in parent.opts.entity[ext.key]}")
-                        td(if="{!parent.opts.compact}") {ind}
+                    tr(each="{entry, ind in parent.opts.entity[ext.key]}" no-reorder)
+                        td.center(if="{!parent.opts.compact}")
+                            code {ind}
                         td(each="{field in ext.fields}")
-                            extensions-editor(intable="true" compact="da" entity="{entry}" customextends="{[field]}")
+                            extensions-editor(intable="true" compact="compact" entity="{entry}" customextends="{[field]}")
                         td
                             // Use opacity to keep nice layout
-                            .inlineblock(onclick="{moveUp}" title="{voc.moveUp}" style="opacity: {ind === 0? 0 : 1};")
-                                svg.feather.dim
+                            .anActionableIcon(onclick="{moveUp(ext, entry)}" title="{voc.moveUp}" style="{ind === 0 ? 'opacity: 0;' : ''}")
+                                svg.feather
                                     use(xlink:href="data/icons.svg#arrow-up")
-                            .inlineblock(onclick="{moveDown}"  style="opacity: {ind === parent.opts.entity[ext.key].length - 1? 0 : 1};" title="{voc.moveDown}")
-                                svg.feather.dim
+                            .anActionableIcon(onclick="{moveDown(ext, entry)}"  style="{ind === parent.parent.opts.entity[ext.key].length - 1 ? 'opacity: 0;' : ''}" title="{voc.moveDown}")
+                                svg.feather
                                     use(xlink:href="data/icons.svg#arrow-down")
-                            .inlineblock.red(onclick="{deleteScript}" title="{voc.deleteScript}")
-                                svg.feather.dim
+                            .anActionableIcon(onclick="{deleteRow(ext, entry)}" title="{voc.deleteScript}")
+                                svg.feather.red
                                     use(xlink:href="data/icons.svg#delete")
                         tr(if="{!parent.opts.entity[ext.key] || !parent.opts.entity[ext.key].length}")
                             td(colspan="{ext.fields.length + (parent.opts.compact ? 1 : 2)}") {parent.voc.noEntries}
@@ -269,7 +270,31 @@ extensions-editor
                 row[field.key]  = field.default;
             }
             this.opts.entity[ext.key].push(row);
-        }
+        };
+
+        this.moveUp = (field, row) => e => {
+            if (e.item.ind === 0) {
+                return;
+            }
+            const array = this.opts.entity[field.key],
+                  ind = array.indexOf(row);
+            [array[ind - 1], array[ind]] = [array[ind], array[ind - 1]];
+            //this.update();
+        };
+        this.moveDown = (field, row) => e => {
+            const array = this.opts.entity[field.key],
+                  ind = array.indexOf(row);
+            if (ind >= array.length - 1) {
+                return;
+            }
+            [array[ind], array[ind + 1]] = [array[ind + 1], array[ind]];
+            //this.update();
+        };
+        this.deleteRow = (field, row) => e => {
+            const array = this.opts.entity[field.key],
+                  ind = array.indexOf(row);
+            array.splice(ind, 1);
+        };
 
         window.signals.on('modulesChanged', this.refreshExtends);
         this.on('unmount', () => {
