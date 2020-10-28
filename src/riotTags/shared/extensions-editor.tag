@@ -91,6 +91,12 @@ extensions-editor
                         use(xlink:href="data/icons.svg#plus")
                     span {parent.voc.addRow}
             dd(if="{ext.type !== 'table'}")
+                input.nogrow(
+                    if="{ext.type === 'checkbox' && parent.opts.intable}"
+                    type="checkbox"
+                    checked="{parent.opts.entity[ext.key] || ext.default}"
+                    onchange="{wire('this.opts.entity.'+ ext.key)}"
+                )
                 texture-input(
                     if="{ext.type === 'texture'}"
                     class="{compact: parent.opts.compact, wide: parent.opts.wide}"
