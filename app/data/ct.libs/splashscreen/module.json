@@ -11,14 +11,13 @@
             "customization"
         ]
     },
+    "dependencies": ["tween", "transition"],
     "fields": [{
-        "name": "Common settings",
-        "type": "h2"
-    }, {
         "name": "Slide duration, ms",
         "key": "slideDuration",
-        "default": 3000,
+        "default": 4000,
         "type": "number",
+        "help": "Includes transitions, so it should be at least twice as much as \"Transition duration\" value.",
         "min": 0
     }, {
         "name": "Transition duration, ms",
@@ -37,13 +36,10 @@
         "default": "#000000",
         "type": "color"
     }, {
-        "name": "Slides are skippable",
+        "name": "Skip slides on mouse click / touch / key press / gamepad input. (Requires at least one of the modules that provide inputs for these.)",
         "key": "skippable",
         "default": true,
         "type": "checkbox"
-    }, {
-        "name": "Slides",
-        "type": "h2"
     }, {
         "name": "Slides",
         "key": "slides",
@@ -69,6 +65,12 @@
                 "value": "zoomOut",
                 "name": "Zoom out"
             }]
+        }, {
+            "name": "Fill",
+            "key": "fill",
+            "type": "checkbox",
+            "default": false,
+            "help": "If enabled, the logo will occupy the whole screen stretching proportionally; otherwise, it will be twice as small and placed at the center of the screen."
         }]
     }]
 }
