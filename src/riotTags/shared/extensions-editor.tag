@@ -63,31 +63,32 @@ extensions-editor
                     b :
                     hover-hint(if="{ext.help && parent.opts.compact}" text="{ext.help}")
             dd(if="{ext.type === 'table'}")
-                table.nicetable
-                    tr
-                        th.center(if="{!parent.opts.compact}") №
-                        th(each="{field in ext.fields}")
-                            | {field.name}
-                            hover-hint(if="{field.help}" text="{field.help}")
-                        th Actions
-                    tr(each="{entry, ind in parent.opts.entity[ext.key]}" no-reorder)
-                        td.center(if="{!parent.opts.compact}")
-                            code {ind}
-                        td(each="{field in ext.fields}")
-                            extensions-editor(intable="true" compact="compact" entity="{entry}" customextends="{[field]}")
-                        td
-                            // Use opacity to keep nice layout
-                            .anActionableIcon(onclick="{moveUp(ext, entry)}" title="{voc.moveUp}" style="{ind === 0 ? 'opacity: 0;' : ''}")
-                                svg.feather
-                                    use(xlink:href="data/icons.svg#arrow-up")
-                            .anActionableIcon(onclick="{moveDown(ext, entry)}"  style="{ind === parent.parent.opts.entity[ext.key].length - 1 ? 'opacity: 0;' : ''}" title="{voc.moveDown}")
-                                svg.feather
-                                    use(xlink:href="data/icons.svg#arrow-down")
-                            .anActionableIcon(onclick="{deleteRow(ext, entry)}" title="{voc.deleteScript}")
-                                svg.feather.red
-                                    use(xlink:href="data/icons.svg#delete")
-                        tr(if="{!parent.opts.entity[ext.key] || !parent.opts.entity[ext.key].length}")
-                            td(colspan="{ext.fields.length + (parent.opts.compact ? 1 : 2)}") {parent.voc.noEntries}
+                .aTableWrap
+                    table.nicetable
+                        tr
+                            th.center(if="{!parent.opts.compact}") №
+                            th(each="{field in ext.fields}")
+                                | {field.name}
+                                hover-hint(if="{field.help}" text="{field.help}")
+                            th Actions
+                        tr(each="{entry, ind in parent.opts.entity[ext.key]}" no-reorder)
+                            td.center(if="{!parent.opts.compact}")
+                                code {ind}
+                            td(each="{field in ext.fields}")
+                                extensions-editor(intable="true" compact="compact" entity="{entry}" customextends="{[field]}")
+                            td
+                                // Use opacity to keep nice layout
+                                .anActionableIcon(onclick="{moveUp(ext, entry)}" title="{voc.moveUp}" style="{ind === 0 ? 'opacity: 0;' : ''}")
+                                    svg.feather
+                                        use(xlink:href="data/icons.svg#arrow-up")
+                                .anActionableIcon(onclick="{moveDown(ext, entry)}"  style="{ind === parent.parent.opts.entity[ext.key].length - 1 ? 'opacity: 0;' : ''}" title="{voc.moveDown}")
+                                    svg.feather
+                                        use(xlink:href="data/icons.svg#arrow-down")
+                                .anActionableIcon(onclick="{deleteRow(ext, entry)}" title="{voc.deleteScript}")
+                                    svg.feather.red
+                                        use(xlink:href="data/icons.svg#delete")
+                            tr(if="{!parent.opts.entity[ext.key] || !parent.opts.entity[ext.key].length}")
+                                td(colspan="{ext.fields.length + (parent.opts.compact ? 1 : 2)}") {parent.voc.noEntries}
                 button(onclick="{parent.addRow}")
                     svg.feather
                         use(xlink:href="data/icons.svg#plus")
