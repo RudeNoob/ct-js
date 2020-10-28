@@ -66,7 +66,9 @@ extensions-editor
                 table.nicetable
                     tr
                         th.center(if="{!parent.opts.compact}") №
-                        th(each="{field in ext.fields}") {field.name}
+                        th(each="{field in ext.fields}")
+                            | {field.name}
+                            hover-hint(if="{field.help}" text="{field.help}")
                         th Actions
                     tr(each="{entry, ind in parent.opts.entity[ext.key]}" no-reorder)
                         td.center(if="{!parent.opts.compact}")
